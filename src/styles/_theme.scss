@@ -44,8 +44,8 @@ body {
 }
 
 .sidebar {
-  border-right: 2px solid darkred;
-  background-color: red;
+  border-right: 2px solid darkblue;
+  background-color: blue;
 }
 
 .sidebar .nav-link {
@@ -55,24 +55,24 @@ body {
 .sidebar .nav-link:hover, 
 .sidebar .nav-link:active, 
 .sidebar .nav-link:focus { 
-  background-color: darkred; /* Ubah background saat di-hover, ditekan, atau difokuskan */
+  background-color: darkblue; /* Ubah background saat di-hover, ditekan, atau difokuskan */
   color: white; /* Ubah warna teks saat di-hover, ditekan, atau difokuskan */
 }
 
 .sidebar .sidebar-toggler:hover, 
 .sidebar .sidebar-toggler:active, 
 .sidebar .sidebar-toggler:focus {
-  background-color: darkred; /* Jika tombol sidebar ada, beri warna background saat di-hover, ditekan, atau difokuskan */
+  background-color: darkblue; /* Jika tombol sidebar ada, beri warna background saat di-hover, ditekan, atau difokuskan */
 }
 
 .sidebar .nav-link:active {
-  background-color: darkred; /* Latar belakang tetap merah ketika link aktif */
-  color: darkredgreen; /* Teks tetap putih */
+  background-color: darkblue; /* Latar belakang tetap merah ketika link aktif */
+  color: white; /* Teks tetap putih */
 }
 
 /* Opsional: Menambahkan gaya untuk elemen yang memiliki status 'visited' */
 .sidebar .nav-link:visited {
-  background-color: darkred; /* Ganti latar belakang menjadi merah setelah dikunjungi */
+  background-color: darkblue; /* Ganti latar belakang menjadi merah setelah dikunjungi */
   color: white; /* Teks tetap putih */
 }
 

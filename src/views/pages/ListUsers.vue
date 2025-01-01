@@ -15,8 +15,8 @@
         </div>
 
         <div v-if="loading" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
+            <div class="spinner"></div>
+        </div>
 
         <div class="overflow-x-auto rounded-lg border border-gray-200">
             <CTable>
@@ -25,44 +25,31 @@
                         <CTableHeaderCell scope="col">No</CTableHeaderCell>
                         <CTableHeaderCell scope="col">NIP</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Nama Lengkap</CTableHeaderCell>
-                        <CTableHeaderCell scope="col">Email</CTableHeaderCell>
-                        <CTableHeaderCell scope="col">Level</CTableHeaderCell>
+                        <CTableHeaderCell scope="col">Role</CTableHeaderCell>
+                        <CTableHeaderCell scope="col">Unit</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Action</CTableHeaderCell>
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                    <CTableRow v-for="(user, index) in users" :key="user.nip">
+                    <CTableRow v-for="(user, index) in users" :key="user.id">
                         <CTableHeaderCell scope="row">{{ (page - 1) * 10 + index + 1 }}</CTableHeaderCell>
-                        <CTableDataCell>{{ user.nip }}</CTableDataCell>
-                        <CTableDataCell>{{ user.userFullName }}</CTableDataCell>
-                        <CTableDataCell>{{ user.userEmail }}</CTableDataCell>
-                        <!-- <CTableDataCell>Unknow</CTableDataCell> -->
-                        <CTableDataCell>{{ user.roleName }}</CTableDataCell>
+                        <CTableDataCell>{{ user.niip }}</CTableDataCell>
+                        <CTableDataCell>{{ user.nama }}</CTableDataCell>
+                        <CTableDataCell>{{ user.role }}</CTableDataCell>
+                        <CTableDataCell>{{ user.unit }}</CTableDataCell>
                         <CTableDataCell>
                             <div class="flex space-x-2">
-                                <button @click="UpdateUser(user.nip)"
+                                <button @click="UpdateUser(user.id)"
                                     class="bg-orange-500 text-white p-2 rounded-lg hover:bg-orange-600">Update</button>
-                                <button @click="ResetPassword(user.nip)"
-                                    class="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600">Reset
-                                    Password</button>
+                                <button @click="ResetPassword(user.id)"
+                                    class="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600">Reset Password</button>
+                                    <button @click="DeleteUser(user.id)"
+                                    class="bg-gray-500 text-white p-2 rounded-lg hover:bg-gray-600">Delete</button>
                             </div>
                         </CTableDataCell>
                     </CTableRow>
                 </CTableBody>
             </CTable>
-        </div>
-
-        <!-- Pagination -->
-        <div class="mt-4 flex justify-between items-center">
-            <button @click="changePage(page - 1)" :disabled="page === 1"
-                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-                Prev
-            </button>
-            <span>Page {{ page }} </span>
-            <button @click="changePage(page + 1)" :disabled="page === totalPages"
-                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-                Next
-            </button>
         </div>
     </div>
 </template>
@@ -76,41 +63,56 @@ export default {
         return {
             searchUsers: "",
             users: [],
-            page: 1,
-            totalPages: 1,
-            totalUsers: 0,
-            sortOrder: 'asc',
             loading: false,
+            page: 1, 
         };
     },
-
-    // computed: {
-    //     // Membuat computed property untuk mendapatkan nama role berdasarkan roleId
-    //     roleName() {
-    //         return (roleId) => {
-    //             const roles = {
-    //                 6: 'Outlet',
-    //                 1: 'Super Admin',
-    //                 2: 'GA Pusat',
-    //                 5: 'GA Area',
-    //                 4: 'Keuangan',
-    //                 3: 'IT', // Ganti dengan roleId dan nama sesuai kebutuhan
-    //             };
-    //             return roles[roleId] || 'Unknown'; // Jika roleId tidak ditemukan, tampilkan 'Unknown'
-    //         };
-    //     }
-    // },
-
     methods: {
-        UpdateUser(nip) {
-            this.$router.push({ name: 'UpdateUser', params: { nip: nip } });
-            console.log("Updating user with ID:", nip);
+        UpdateUser(id) {
+            this.$router.push({ name: 'UpdateUser', params: { id: id } });
+            console.log("Updating user with id:", id);
         },
-        ResetPassword(nip) {
-            this.$router.push({ name: 'ResetPassword', params: { nip: nip } });
-            console.log("Reset Password user with ID:", nip);
+        
+        ResetPassword(id) {
+            this.$router.push({ name: 'ResetPassword', params: { id: id } });
+            console.log("Reset Password user with id:", id);
         },
 
+        async DeleteUser(id) {
+            const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+  if (!confirmDelete) {
+    alert("User deletion cancelled.");
+    return;
+  }
+  
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Token is missing. Please log in again.");
+    return;
+  }
+    try {
+      const response = await axios.delete(`http://127.0.0.1:8000/api/admin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Response status:", response.status);
+      console.log("Response data:", response.data);
+
+      if (response.status === 200 && response.data.message) {
+        alert(response.data.message); // Tampilkan pesan dari backend
+        await this.fetchUsers();
+      } else {
+      console.error("Unexpected response:", response.data);
+      alert("Failed to delete the user.");
+    }
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    alert("An error occurred while deleting the user.");
+  }
+},
+        // Fetch users from the API
         async fetchUsers() {
             this.loading = true;
             try {
@@ -120,50 +122,37 @@ export default {
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:8080/api/users`, {
-                    params: {
-                        page_number: this.page, 
-                        page_size: 10,          
-                        q: this.searchUsers,    
+                const response = await axios.get('http://127.0.0.1:8000/api/dataAdmin', {
+                    params: {       
+                        q: this.searchUsers,
                     },
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
-                this.users = response.data.data;
-                this.totalUsers = response.data.total;
-                this.totalPages = Math.ceil(this.totalUsers / 10); 
+                this.users = response.data.data || []; 
             } catch (error) {
                 console.error('Error fetching users:', error);
-            } finally{
+            } finally {
                 this.loading = false;
             }
         },
 
-        changePage(newPage) {
-            if (newPage < 1 || newPage > this.totalPages) return;
-            this.page = newPage;
-            this.fetchUsers();
-        },
-
         debouncedSearch: debounce(function () {
-            this.page = 1; 
             this.fetchUsers();
         }, 500),
     },
     watch: {
         page() {
-            this.fetchUsers(); 
-        }
+            this.fetchUsers();
+        },
     },
     mounted() {
         this.fetchUsers();
     },
 };
 </script>
-
-
 
 <style scoped>
 .loading-overlay {

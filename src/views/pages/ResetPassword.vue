@@ -3,25 +3,24 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Reset Password Akun Pengguna</strong>
+          <strong>Update Pengguna</strong>
         </CCardHeader>
         <CCardBody>
           <CForm @submit.prevent="submitForm">
-            <!-- Password Baru -->
             <div class="mb-3">
-              <CFormLabel for="user_password">Password Baru</CFormLabel>
-              <CFormInput id="user_password" v-model="user_password" type="password"
-                placeholder="Masukkan password baru" />
+              <CFormLabel for="niip">NIPP</CFormLabel>
+              <CFormInput id="niip" v-model="niip" type="number" placeholder="Masukkan NIPP" required />
             </div>
-            <!-- Konfirmasi Password -->
             <div class="mb-3">
-              <CFormLabel for="new_password_confirmation">Password Baru Ulang</CFormLabel>
-              <CFormInput id="new_password_confirmation" v-model="new_password_confirmation" type="password"
-                placeholder="Masukkan password baru ulang" />
+              <CFormLabel for="nama">Nama Nama Pengguna</CFormLabel>
+              <CFormInput id="nama" v-model="nama" type="text" placeholder="Masukkan Nama Pengguna" required />
+            </div>
+            <div class="mb-3">
+              <CFormLabel for="unit">Unit Pengguna</CFormLabel>
+              <CFormInput id="unit" v-model="unit" type="text" placeholder="Masukkan unit" required />
             </div>
             <div class="flex justify-end mt-4">
-              <button type="submit"
-                class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 flex items-center">
+              <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
                 Submit
               </button>
             </div>
@@ -31,52 +30,74 @@
     </CCol>
   </CRow>
 </template>
-
 <script>
 import axios from "axios";
 
 export default {
   data() {
-    return {
-      nip: this.$route.params.nip,
-      user_password: "",
-      new_password_confirmation: "",
-    };
-  },
-  methods: {
-    submitForm() {
-      const token = localStorage.getItem("token");
-
-      if (this.user_password !== this.new_password_confirmation) {
-        alert("Password dan konfirmasi password tidak sama.");
-        return;
-      }
-
-      const dataToSend = {
-        nip: this.nip,  
-        user_password: this.user_password,
-        reset_token: token, 
+      return {
+          id: this.$route.params.id,
+          nama: "",
+          unit: "",
+          niip: "",
       };
+  },
+  created() {
+      this.fetchUserData(this.id);
+  },
+ 
+  methods: {
+      fetchUserData(id) {
+          const token = localStorage.getItem("token");
+          axios
+              .get(`http://127.0.0.1:8000/api/getAdmin/${id}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+              })
+              .then((response) => {
+                  const user = response.data;
 
+                  // Set data pengguna
+                  this.nama = user.nama;
+                  this.unit = user.unit;
+                  this.niip = user.niip;
+              })
+              .catch((error) => {
+                  console.error("Gagal mengambil data pengguna:", error);
+              });
+      },
 
-      axios
-        .post(`http://localhost:8080/api/reset-password`, dataToSend, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("Password berhasil direset:", response.data);
-          this.$router.push("/pages/users");
-        })
-        .catch((error) => {
-          if (error.response && error.response.data) {
-            console.error("Gagal reset password:", error.response.data);
-          } else {
-            console.error("Gagal reset password:", error);
+     
+      submitForm() {
+          if (this.password !== this.password_confirmation) {
+              alert("Password dan konfirmasi password tidak sama.");
+              return;
           }
-        });
-    },
+
+          const id = this.$route.params.id;
+          const token = localStorage.getItem("token");
+          const dataToSend = {
+              nama: this.nama,
+              unit: this.unit,
+              niip: this.niip, // Pastikan ini benar
+          };
+
+          console.log("Data yang dikirim:", dataToSend);
+
+          axios.put(`http://127.0.0.1:8000/api/updateAdmin/${id}`, dataToSend, {
+              headers: { Authorization: `Bearer ${token}` }
+          })
+              .then((response) => {
+                  console.log("Pengguna berhasil diupdate:", response.data);
+                  this.$router.push('/pages/ListUsers'); // Arahkan setelah berhasil
+              })
+              .catch((error) => {
+                  if (error.response && error.response.data) {
+                      console.error("Gagal update pengguna:", error.response.data);
+                  } else {
+                      console.error("Gagal update pengguna:", error);
+                  }
+              });
+      }
   },
 };
 </script>

@@ -37,7 +37,7 @@ const AppSidebarNav = defineComponent({
     const firstRender = ref(true)
     const sidebarKey = ref(0) // Reactive key for forcing re-render
 
-    const roleId = localStorage.getItem("role_id");  // Ambil roleId dari localStorage
+    const role = localStorage.getItem("role");  // Ambil role dari localStorage
 
     onMounted(() => {
       firstRender.value = false
@@ -48,19 +48,21 @@ const AppSidebarNav = defineComponent({
       sidebarKey.value += 1 // Change key to trigger re-render
     })
 
-    // Fungsi untuk memfilter menu berdasarkan roleId
     const filterMenuByRole = (menu) => {
-      // Jika roleId adalah 5 atau 6, sembunyikan menu tertentu
-      if (roleId === '6' || roleId === '5') {
-        if (menu.name === 'Masters' || menu.name === 'Laporan') {
-          return false; // Menyembunyikan menu
-        }
+      // Jika role bukan 'Admin', sembunyikan menu 'Users' dan 'Reset Headers'
+      if (role !== 'Admin' && (menu.name === 'Users' || menu.name === 'Headers')) {
+        return false; // Menyembunyikan menu
+      }
+      // Jika item memiliki sub-item, filter sub-item juga
+      if (menu.items) {
+        menu.items = menu.items.filter(filterMenuByRole)
       }
       return true; // Menampilkan menu
     }
 
+
     const renderItem = (item) => {
-      // Jika item tidak memenuhi filter berdasarkan roleId, kembalikan null
+      // Jika item tidak memenuhi filter berdasarkan role, kembalikan null
       if (!filterMenuByRole(item)) {
         return null;
       }
@@ -150,12 +152,10 @@ const AppSidebarNav = defineComponent({
           key: sidebarKey.value, 
         },
         {
-          default: () => nav.map((item) => renderItem(item)), 
+          default: () => nav.filter(filterMenuByRole).map((item) => renderItem(item)), 
         },
       )
   },
 })
 
 export { AppSidebarNav }
-
-  

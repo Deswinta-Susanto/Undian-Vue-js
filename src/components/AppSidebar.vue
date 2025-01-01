@@ -19,10 +19,10 @@ const sidebar = useSidebarStore()
       <RouterLink custom to="/" v-slot="{ href, navigate }">
         <CSidebarBrand>
           <div class="sidebar-brand-full text-white">
-            <strong class="text-xl">SSB</strong>
-            <span class="block text-lg">Spesial Soto Boyolali</span>
+            <strong class="text-xl">PT.KAI</strong>
+            <span class="block text-lg">Daop 7 Madiun</span>
           </div>
-          <span class="sidebar-brand-narrow text-white font-bold text-lg">SSB</span>
+          <span class="sidebar-brand-narrow text-white font-bold text-lg">PT.KAI</span>
         </CSidebarBrand>
       </RouterLink>
       <CCloseButton class="d-lg-none" dark @click="sidebar.toggleVisible()" />

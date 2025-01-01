@@ -8,7 +8,7 @@
     <div class="ms-auto">
       <!-- <span class="me-1" target="_blank">Powered by IT PT SSB</span> -->
       <span class="ms-1"
-        >&copy; {{ new Date().getFullYear() }} IT PT SSB.</span
+        >&copy; {{ new Date().getFullYear() }} IT PT. KAI DAOP 7 Madiun.</span
       >
     </div>
   </CFooter>

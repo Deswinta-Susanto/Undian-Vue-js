@@ -35,8 +35,8 @@ onMounted(() => {
           <CNavLink href="#">Users</CNavLink>
         </CNavItem> -->
         <div class="sidebar-brand-full text-grey">
-            <strong class="text-xl">Maintenance Aset</strong>
-          </div>
+    <strong class="text-xl">{{ headerText }}</strong>
+  </div>
         <!-- <CNavItem>
   <CNavLink href="#" class="font-bold">Maintenance Aset</CNavLink>
 </CNavItem> -->
@@ -110,3 +110,34 @@ onMounted(() => {
     </CContainer>
   </CHeader>
 </template>
+
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      headerText: 'Sistem Undian PT. KAI Daop 7 Madiun', // Default text
+    };
+  },
+  created() {
+    this.fetchHeaderText();
+  },
+  methods: {
+    fetchHeaderText() {
+      const token = localStorage.getItem('token');
+      axios
+        .get('http://127.0.0.1:8000/api/customize-header/get/2', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.headerText = response.data.data.nama_header; // Ganti dengan field yang sesuai dari respons
+        })
+        .catch((error) => {
+          console.error('Gagal mengambil data header:', error);
+        });
+    },
+  },
+};
+</script>

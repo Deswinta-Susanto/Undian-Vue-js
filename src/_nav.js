@@ -1,22 +1,22 @@
 export default [
   {
     component: 'CNavItem',
-    name: 'Dashboard',
-    to: '/dashboard',
+    name: 'Undian',
+    to: '/pages/GridSpin',
     icon: 'cil-speedometer',
     badge: {
       color: 'primary',
     },
   },
-  {
-    component: 'CNavItem',
-    name: 'Daftar Aset',
-    to: '/pages/AsetList',
-    icon: 'cil-notes',
-    badge: {
-      color: 'primary',
-    },
-  },
+  // {
+  //   component: 'CNavItem',
+  //   name: 'Daftar Aset',
+  //   to: '/pages/AsetList',
+  //   icon: 'cil-notes',
+  //   badge: {
+  //     color: 'primary',
+  //   },
+  // },
   {
     component: 'CNavGroup',
     name: 'Masters', 
@@ -25,42 +25,81 @@ export default [
       {
         component: 'CNavItem',
         name: 'Users', 
-        to: '/pages/users', 
+        to: '/pages/ListUsers', 
         badge: {
           color: 'primary',
         },
       },
       {
         component: 'CNavItem',
-        name: 'Asets',
-        to: '/pages/asets', 
+        name: 'Events',
+        to: '/pages/ListEvents', 
         badge: {
           color: 'primary',
         },
       },
+      {
+        component: 'CNavItem',
+        name: 'Doorpizes',
+        to: '/pages/ListDoorprizes', 
+        badge: {
+          color: 'primary',
+        },
+      },
+      {
+        component: 'CNavItem',
+        name: 'Kandidat Hadiah Utama',
+        to: '/pages/ListKandidatUtama', 
+        badge: {
+          color: 'primary',
+        },
+      },
+      {
+        component: 'CNavItem',
+        name: 'Kandidat Hadiah Umum',
+        to: '/pages/ListKandidatUmum', 
+        badge: {
+          color: 'primary',
+        },
+      },
+      {
+        component: 'CNavItem',
+        name: 'Kandidat Hadiah Lainnya',
+        to: '/pages/ListKandidatLainnya', 
+        badge: {
+          color: 'primary',
+        },
+      },
+      {
+        component: 'CNavItem',
+        name: 'Headers',
+        to: '/pages/ResetHeaders', 
+        badge: {
+          color: 'primary',
+        },
+        
+      },
     ],
   },
-  {
-    component: 'CNavItem', 
-    name: 'Scan Qr', 
-    to: '/pages/ScanQr', 
-    icon: 'cil-calculator',
-  },
+
   {
     component: 'CNavGroup',
-    name: 'Laporan', 
-    icon: 'cil-chart-pie', 
+    name: 'Riwayat', 
+    icon: 'cil-settings', 
     items: [ 
       {
         component: 'CNavItem',
-        name: 'Pengajuan Service', 
-        to: '/pages/PengajuanService', 
+        name: 'Riwayat Undian', 
+        to: '/pages/ListRiwayatSpin', 
         badge: {
           color: 'primary',
         },
       },
-    ],
-  },
+    ]
+    }
+  
+  
+
   ]
 
         // {

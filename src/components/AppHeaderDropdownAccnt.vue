@@ -1,35 +1,16 @@
 <script setup>
 import { ref } from 'vue'
 import avatar from '@/assets/images/avatars/avatar.png'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 // Fungsi logout
-const logout = async () => {
+const logout = () => {
   try {
-    const token = localStorage.getItem('token') // Ambil token dari localStorage
-
-    if (!token) {
-      console.error("Token not found")
-      return
-    }
-
-    // Lakukan permintaan logout dengan token sebagai payload
-    await axios.post(
-      'http://localhost:8080/api/logout',
-      { token }, 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    )
-
     // Hapus data dari localStorage
-    localStorage.removeItem('role_id')
     localStorage.removeItem('token')
+    localStorage.removeItem('role')
 
     // Arahkan ke halaman login
     router.push('/pages/login')

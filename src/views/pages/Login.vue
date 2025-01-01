@@ -1,5 +1,6 @@
 <template>
-  <div class="wrapper min-vh-100 d-flex flex-row align-items-center justify-content-center" style="background-color: orange; position: relative;">
+  <div class="wrapper min-vh-100 d-flex flex-row align-items-center justify-content-center"
+    style="background-color: grey; position: relative;">
     <CContainer>
       <CRow class="justify-content-center">
         <CCol :md="6">
@@ -7,33 +8,28 @@
             <CCard class="p-4">
               <CCardBody>
                 <CForm @submit.prevent="handleLogin">
-                  <h1 class="text-center">Maintenance Aset</h1>
-                  <p class="text-body-secondary text-center">Kelola aset dengan mudah dan efisien</p>
+                  <div class="logo-container text-center mb-4">
+                    <img src="@/assets/images/Logo-hd.png" alt="Logo" class="logo" />
+                  </div>
+                  <h1 class="text-center">Undian PT KAI DAOP 7 Madiun</h1>
+                  <p class="text-body-secondary text-center">Masuk untuk mengelola dan memantau proses undian!</p>
                   <div v-if="errorMessage" class="text-center text-danger mb-4">{{ errorMessage }}</div>
                   <CInputGroup class="mb-3">
                     <CInputGroupText>
                       <CIcon icon="cil-user" />
                     </CInputGroupText>
-                    <CFormInput
-                      v-model="nip"
-                      placeholder="nip"
-                      autocomplete="nip"
-                    />
+                    <CFormInput v-model="nama" placeholder="masukkan nama" autocomplete="nama" />
                   </CInputGroup>
                   <CInputGroup class="mb-4">
                     <CInputGroupText>
                       <CIcon icon="cil-lock-locked" />
                     </CInputGroupText>
-                    <CFormInput
-                      v-model="user_password"
-                      type="password"
-                      placeholder="Password"
-                      autocomplete="user_password"
-                    />
+                    <CFormInput v-model="password" type="password" placeholder="masukkan password"
+                      autocomplete="password" />
                   </CInputGroup>
                   <CRow class="justify-content-center">
                     <CCol :xs="6" class="d-flex justify-content-center">
-                      <CButton type="submit" color="danger" class="px-4 text-white" :disabled="loading">
+                      <CButton type="submit" color="primary" class="px-4 text-white" :disabled="loading">
                         {{ loading ? 'Loading...' : 'Login' }}
                       </CButton>
                     </CCol>
@@ -46,12 +42,6 @@
       </CRow>
     </CContainer>
 
-    <div class="ssb-text">
-      SSB
-      <div class="sub-text">Spesial Soto Boyolali</div>
-      <div class="sub">Hj. Hesti Widodo</div>
-    </div>
-
     <div v-if="loading" class="loading-overlay">
       <div class="spinner"></div>
     </div>
@@ -60,49 +50,44 @@
 
 <script>
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+
 
 export default {
   data() {
     return {
-      nip: '',
-      user_password: '',
-      loading: false, 
-      errorMessage: '', 
+      nama: '',
+      password: '',
+      loading: false,
+      errorMessage: '',
     };
   },
   methods: {
     handleLogin() {
-  this.loading = true; 
-  this.errorMessage = '';
+      this.loading = true;
+      this.errorMessage = '';
 
-  axios
-    .post('http://localhost:8080/api/login', {
-      nip: this.nip,
-      user_password: this.user_password,
-    })
-    .then((response) => {
-      const data = response.data;
-      const token = data.token;
-      localStorage.setItem('token', token);
-      try {
-        const decodedToken = jwt_decode(token);
-        const roleId = decodedToken.role_id;        
-        localStorage.setItem('role_id', roleId);
-      } catch (error) {
-        console.error('Invalid token:', error);
-      }
-      this.$router.push('/dashboard').then(() => {
-      });
-    })
-    .catch((error) => {
-          console.error('Login failed:', error.response);
-          this.errorMessage = 'Login gagal, cek kembali nip dan password anda!';
+      axios
+        .post('http://127.0.0.1:8000/api/login', {
+          nama: this.nama,
+          password: this.password,
         })
-    .finally(() => {
-      this.loading = false; 
-    });
-},
+        .then((response) => {
+          const data = response.data;
+          const token = data.token;
+          const role = data.data.role;
+          localStorage.setItem('token', token);
+          localStorage.setItem('role', role);
+          this.$router.push('/pages/GridSpin').then(() => {
+          });
+        })
+        .catch((error) => {
+          console.error('Login failed:', error.response);
+          this.errorMessage = 'Login gagal, cek kembali nama dan password anda!';
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
   },
 };
 </script>
@@ -111,6 +96,16 @@ export default {
 .wrapper {
   background-color: orange;
   position: relative;
+}
+
+.logo-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  width: 100px; /* Adjust the size as needed */
 }
 
 .ssb-text {
@@ -165,7 +160,3 @@ export default {
   }
 }
 </style>
-
-
-
-
